@@ -1,0 +1,8 @@
+﻿{
+  "Id": "SkipGPOffice",
+  "DisplayName": "Skip GPOffice",
+  "Author": "Silverdark",
+  "Version": "1.0.0",
+  "ManagerVersion": "0.12.0",
+  "EntryMethod": "SkipGPOffice.Program.Load"
+}
