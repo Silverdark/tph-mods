@@ -1,6 +1,15 @@
 # Two Point Hospital Mods
 
-Thanks to [newman55](https://github.com/newman55) for the creation of the [Unity Mod Manager](https://github.com/newman55/unity-mod-manager).
+## Available mods
+
+* [Skip GPOffice](https://www.nexusmods.com/twopointhospital/mods/8)<br/>
+  Skip the extra visit to the GPOffice when the diagnosis certainty is higher than the configureable value.
+
+* [Epidemic Helper](https://www.nexusmods.com/twopointhospital/mods/9)<br/>
+  Provides helper actions for the epidemic challenges, like logging the infected character names, highlight them or vaccinate all of them.
+
+* [Qualification Utils](https://www.nexusmods.com/twopointhospital/mods/10)<br/>
+  Manage the qualifications and rank of your staff.
 
 ## Development / Build
 
@@ -14,3 +23,7 @@ You need to update the references to the assemblies. For example the [EpidemicHe
 ```
 
 Update the path to your game path.
+
+## Credits
+
+* Thanks to [newman55](https://github.com/newman55) for the creation of the [Unity Mod Manager](https://github.com/newman55/unity-mod-manager).

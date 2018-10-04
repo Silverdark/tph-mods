@@ -3,5 +3,6 @@
 	[
 		{"Id": "EpidemicHelper", "Version": "1.0.0"},
 		{"Id": "SkipGPOffice", "Version": "1.0.0"},
+        {"Id": "QualificationUtils", "Version": "1.0.0"}
 	]
 }
