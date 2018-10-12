@@ -72,7 +72,7 @@ namespace EpidemicHelper
             Logger.Log("Infected players:");
 
             foreach (var infectedCharacter in GetInfectedCharacters())
-                Logger.Log(infectedCharacter.CharacterName.Translate());
+                Logger.Log(infectedCharacter.CharacterName.GetCharacterName());
         }
 
         private static void HighlightInfectedCharacters()

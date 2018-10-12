@@ -1,8 +1,8 @@
 {
 	"Releases":
 	[
-		{"Id": "EpidemicHelper", "Version": "1.0.0"},
-		{"Id": "SkipGPOffice", "Version": "1.0.0"},
+		{"Id": "EpidemicHelper", "Version": "1.0.1"},
+		{"Id": "SkipGPOffice", "Version": "1.0.1"},
         {"Id": "QualificationUtils", "Version": "1.0.0"}
 	]
 }

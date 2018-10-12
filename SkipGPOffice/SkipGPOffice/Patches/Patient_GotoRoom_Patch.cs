@@ -28,7 +28,7 @@ namespace SkipGPOffice.Patches
                 var treatmentRoom = __instance.Illness.GetTreatmentRoom(__instance, researchManager);
 
                 if (Program.Settings.EnableLogging)
-                    Program.Logger.Log($"{DateTime.Now} Patient: {__instance.CharacterName.Translate()} with {__instance.DiagnosisCertainty}% diagnosis certainty! Redirect to {treatmentRoom.LocalisedName.Translation}!");
+                    Program.Logger.Log($"{DateTime.Now} Patient: {__instance.CharacterName.GetCharacterName()} with {__instance.DiagnosisCertainty}% diagnosis certainty! Redirect to {treatmentRoom.LocalisedName.Translation}!");
 
                 __instance.SendToTreatmentRoom(treatmentRoom, true);
                 return false;
