@@ -1,5 +1,4 @@
-﻿using System;
-using Harmony12;
+﻿using Harmony12;
 using TH20;
 
 namespace QualificationUtils.Patches
@@ -17,7 +16,7 @@ namespace QualificationUtils.Patches
 
         private static void Postfix(Character character)
         {
-            if (!Program.Enabled)
+            if (!Main.Enabled)
                 return;
 
             if (character == null || !(character is Staff staff))

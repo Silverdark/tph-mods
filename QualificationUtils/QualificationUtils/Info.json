@@ -1,10 +1,10 @@
 ﻿{
-    "Id": "QualificationUtils",
-    "DisplayName": "Qualification Utils",
-    "Author": "Silverdark",
-    "Version": "1.0.0",
-    "ManagerVersion": "0.12.0",
-    "EntryMethod": "QualificationUtils.Program.Load",
-    "HomePage": "https://www.nexusmods.com/twopointhospital/mods/10",
-    "Repository": "https://raw.githubusercontent.com/Silverdark/tph-mods/master/Repository.json"
+  "Id": "QualificationUtils",
+  "DisplayName": "Qualification Utils",
+  "Author": "Silverdark",
+  "Version": "1.1.0",
+  "ManagerVersion": "0.21.8",
+  "EntryMethod": "QualificationUtils.Main.Load",
+  "HomePage": "https://www.nexusmods.com/twopointhospital/mods/10",
+  "Repository": "https://raw.githubusercontent.com/Silverdark/tph-mods/master/Repository.json"
 }

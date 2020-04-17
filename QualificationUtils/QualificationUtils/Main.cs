@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Harmony12;
+using QualificationUtils.Patches;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Harmony12;
-using QualificationUtils.Patches;
 using TH20;
 using UnityEngine;
 using UnityModManagerNet;
@@ -10,7 +11,11 @@ using Object = UnityEngine.Object;
 
 namespace QualificationUtils
 {
-    internal static class Program
+#if DEBUG
+
+    [EnableReloading]
+#endif
+    public static class Main
     {
         #region Properties
 
@@ -21,7 +26,8 @@ namespace QualificationUtils
 
         #region Fields
 
-        private static Vector2 _scrollPosition;
+        private static Vector2 _qualificationScrollPosition;
+        private static Vector2 _traitScrollPosition;
 
         #endregion
 
@@ -35,6 +41,11 @@ namespace QualificationUtils
 
             modEntry.OnToggle = OnToggle;
             modEntry.OnGUI = OnGUI;
+
+#if DEBUG
+            modEntry.OnUnload = OnUnload;
+#endif
+
             return true;
         }
 
@@ -63,14 +74,28 @@ namespace QualificationUtils
                 GUILayout.Label($"Selected: {staff.NameWithTitle}");
 
                 PrintSetRank(staff);
+
                 PrintRemoveQualifications(staff);
                 PrintAddQualifications(staff);
+
+                PrintRemoveTraits(staff);
+                PrintAddTraits(staff);
             }
             catch (Exception e)
             {
                 Logger.Error(e.ToString());
             }
         }
+
+#if DEBUG
+
+        private static bool OnUnload(UnityModManager.ModEntry modEntry)
+        {
+            HarmonyInstance.Create(modEntry.Info.Id).UnpatchAll();
+            return true;
+        }
+
+#endif
 
         #endregion
 
@@ -117,12 +142,12 @@ namespace QualificationUtils
             var allRequiredQualifications = qualifications
                 .Select(slot => slot.Definition.RequiredQualifications)
                 .SelectMany(instances => instances)
-                .Select(instance => (QualificationDefinition) instance.GetInstance)
+                .Select(instance => (QualificationDefinition)instance.GetInstance)
                 .ToArray();
 
             foreach (var qualification in qualifications)
             {
-                string qualificationName = qualification.Definition.NameLocalised.Translation;
+                var qualificationName = qualification.Definition.NameLocalised.Translation;
 
                 if (allRequiredQualifications.Any(definition => definition == qualification.Definition))
                     GUILayout.Label(qualificationName, GUILayout.ExpandWidth(false));
@@ -152,17 +177,69 @@ namespace QualificationUtils
             var level = GetCurrentLoadedLevel();
             var allAvailableQualificationsDefinitions = level.JobApplicantManager.Qualifications.List.Keys;
 
-            _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUILayout.Height(150f));
+            _qualificationScrollPosition = GUILayout.BeginScrollView(_qualificationScrollPosition, GUILayout.Height(150f));
 
             foreach (var definition in allAvailableQualificationsDefinitions)
             {
                 if (!definition.ValidFor(staff))
                     continue;
 
-                if (GUILayout.Button(definition.NameLocalised.Translation, GUILayout.Width(150f)))
+                if (GUILayout.Button(definition.NameLocalised.Translation, GUILayout.Width(200f)))
                 {
                     staff.Qualifications.Add(new QualificationSlot(definition, true));
                     staff.ModifiersComponent?.AddModifiers(definition.Modifiers);
+                }
+            }
+
+            GUILayout.EndScrollView();
+        }
+
+        private static void PrintRemoveTraits(Staff staff)
+        {
+            GUILayout.Label("Remove traits", UnityModManager.UI.h2);
+
+            var activeTraits = GetActiveCharacterTraits(staff);
+            if (activeTraits.Count <= 0)
+            {
+                GUILayout.Label("No traits found.");
+                return;
+            }
+
+            GUILayout.BeginHorizontal();
+
+            foreach (var activeTrait in activeTraits)
+            {
+                if (GUILayout.Button(activeTrait.GetShortName(staff.Gender).ToString(), GUILayout.ExpandWidth(false)))
+                {
+                    staff.Traits.Remove(staff, activeTrait);
+                    staff.ModifiersComponent?.RemoveModifiers(activeTrait.Modifiers);
+                }
+            }
+
+            GUILayout.EndHorizontal();
+        }
+
+        private static void PrintAddTraits(Staff staff)
+        {
+            GUILayout.Label("Add traits (updates when not paused)", UnityModManager.UI.h2);
+
+            var level = GetCurrentLoadedLevel();
+            var allTraits = level.CharacterTraitsManager.AllTraits.List.Keys.ToList();
+            var activeTraits = GetActiveCharacterTraits(staff);
+
+            var availableTraits = allTraits.Where(x => !activeTraits.Contains(x));
+
+            _traitScrollPosition = GUILayout.BeginScrollView(_traitScrollPosition, GUILayout.Height(200f));
+
+            foreach (var trait in availableTraits)
+            {
+                if (!trait.IsValidFor(staff.Definition._type) || trait.Conditions.Any(x => !x.IsValid(staff)))
+                    continue;
+
+                if (GUILayout.Button(trait.GetShortName(staff.Gender).ToString(), GUILayout.Width(200f)))
+                {
+                    staff.Traits.Add(trait);
+                    staff.ModifiersComponent?.AddModifiers(trait.Modifiers);
                 }
             }
 
@@ -180,10 +257,12 @@ namespace QualificationUtils
                 return default;
 
             var app = Traverse.Create(mainScript).Field("_app").GetValue<App>();
-            if (app == null || app.Level == null)
-                return default;
+            return app?.Level;
+        }
 
-            return app.Level;
+        private static List<CharacterTraitDefinition> GetActiveCharacterTraits(Character staff)
+        {
+            return Traverse.Create(staff.Traits).Field("_activeTraits").GetValue<List<CharacterTraitDefinition>>().ToList();
         }
 
         #endregion
