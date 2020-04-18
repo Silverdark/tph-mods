@@ -41,6 +41,8 @@ namespace QualificationUtils
 
             modEntry.OnToggle = OnToggle;
             modEntry.OnGUI = OnGUI;
+            modEntry.OnShowGUI = OnShowGUI;
+            modEntry.OnHideGUI = OnHideGUI;
 
 #if DEBUG
             modEntry.OnUnload = OnUnload;
@@ -85,6 +87,24 @@ namespace QualificationUtils
             {
                 Logger.Error(e.ToString());
             }
+        }
+
+        private static void OnShowGUI(UnityModManager.ModEntry modEntry)
+        {
+            var manager = GetInputManager();
+            if (manager == null)
+                return;
+
+            manager.Enabled = false;
+        }
+
+        private static void OnHideGUI(UnityModManager.ModEntry modEntry)
+        {
+            var manager = GetInputManager();
+            if (manager == null)
+                return;
+
+            manager.Enabled = true;
         }
 
 #if DEBUG
@@ -258,6 +278,16 @@ namespace QualificationUtils
 
             var app = Traverse.Create(mainScript).Field("_app").GetValue<App>();
             return app?.Level;
+        }
+
+        private static InputManager GetInputManager()
+        {
+            var mainScript = Object.FindObjectOfType<MainScript>();
+            if (!mainScript)
+                return default;
+
+            var app = Traverse.Create(mainScript).Field("_app").GetValue<App>();
+            return app?.InputManager;
         }
 
         private static List<CharacterTraitDefinition> GetActiveCharacterTraits(Character staff)
